@@ -35,9 +35,9 @@ public class OpenAMBasicAuthenticator {
     /**
      * User authentication using OpenAM basic authn
      *
-     * @param userId
-     * @param password
-     * @param openAMURL
+     * @param userId    user id
+     * @param password  user's password
+     * @param openAMURL openAM URL
      * @return tokenId for authenticated user, null if authentication fails
      */
     public String authenticate(String userId, String password, String openAMURL) {
