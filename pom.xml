@@ -30,7 +30,7 @@
     <artifactId>OpenIG-OpenAM-BasicAuthn</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
-    <name>OpenIG script</name>
+    <name>OpenIG-OpenAM-BasicAuthn</name>
 
     <repositories>
         <repository>
@@ -62,5 +62,23 @@
             <artifactId>chf-http-core</artifactId>
             <version>3.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy.modules.http-builder</groupId>
+            <artifactId>http-builder</artifactId>
+            <version>0.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
+            <classifier>jdk15</classifier>
+        </dependency>
+        <dependency>
+            <groupId>xml-resolver</groupId>
+            <artifactId>xml-resolver</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+
     </dependencies>
 </project>
