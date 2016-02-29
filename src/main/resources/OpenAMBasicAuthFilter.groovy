@@ -14,7 +14,6 @@
  * Copyright 2016 Charan Mann
  */
 
-
 /*
  * Groovy script for OpenAM basic authentication
  *
@@ -26,51 +25,90 @@ import org.forgerock.http.protocol.Status
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-String REGEX = "\\s*\\S*\"tokenId\"\\s*:\"(.*)\",";
-Pattern pattern = Pattern.compile(REGEX);
-HttpURLConnection connection
 
-try {
-    // Invoke OpenAM REST authentication
-    URL url = new URL(openAMURL)
-    connection = (HttpURLConnection) url.openConnection()
-    connection.setRequestMethod("POST")
-    connection.setRequestProperty("Accept", "application/json")
-    connection.setRequestProperty("X-OpenAM-Username", userId)
-    connection.setRequestProperty("X-OpenAM-Password", password)
-
-    if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-        // If authentication fails, return UNAUTHORIZED status. This can be modified to return specific response status for different failures.
-        response = new Response()
-        response.status = Status.UNAUTHORIZED
-        response.entity = "Authentication Failed"
-        return response
-    }
-
-    // Read response
-    BufferedReader br = new BufferedReader(new InputStreamReader(
-            (connection.getInputStream())))
-    String output = br.readLine()
-
-    Matcher m = pattern.matcher(output)
+/**
+ * Extracts the token from REST response string from OpenAM
+ * @param restResponse
+ * @return tokenId
+ */
+def getToken(String restResponse) {
+    String REGEX_TOKEN = "\\s*\\S*\"tokenId\"\\s*:\"(.*)\",";
+    Pattern pattern = Pattern.compile(REGEX_TOKEN);
+    Matcher m = pattern.matcher(restResponse)
     String tokenId
     if (m.find()) {
         tokenId = m.group(1)
     }
+    return tokenId
+}
 
-    // Set the tokenId in request header
-    request.headers.add("tokenId", tokenId)
-
-    // Call the next handler. This returns when the request has been handled.
-    return next.handle(context, request)
-} catch (Exception e) {
-    // In case of any server issue, return UNAUTHORIZED status
-    response = new Response()
+/**
+ * Creates unauthorized error
+ * @return Status.UNAUTHORIZED
+ */
+def getUnauthorizedError() {
+    Response response = new Response()
     response.status = Status.UNAUTHORIZED
     response.entity = "Authentication Failed"
-}
-finally {
-    connection.disconnect()
+    return response
 }
 
-return response
+def invokeOpenAMEndpoint(String openAMEndpoint, Map headers) {
+    HttpURLConnection connection
+    try {
+        // Invoke OpenAM REST authentication
+        URL url = new URL(openAMEndpoint)
+        connection = (HttpURLConnection) url.openConnection()
+        connection.setRequestMethod("POST")
+
+        //Add headers
+        headers.each { hName, hValue ->
+            println("Adding header : " + hName + " , value: " + hValue)
+            connection.setRequestProperty(hName, hValue)
+        }
+
+        int responseCode = connection.getResponseCode()
+        println("Response Code: " + responseCode)
+        if (responseCode != HttpURLConnection.HTTP_OK) {
+            // If authentication fails, return UNAUTHORIZED status. This can be modified to return specific response status for different failures.
+            return getUnauthorizedError()
+        }
+
+        // Read response
+        BufferedReader br = new BufferedReader(new InputStreamReader(
+                (connection.getInputStream())))
+        String output = br.readLine()
+
+        return output
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        // In case of any server issue, return UNAUTHORIZED status
+        return getUnauthorizedError()
+    }
+    finally {
+        connection.disconnect()
+    }
+
+    // Should not reach here
+    return null;
+}
+
+//TODO Add OpenAM token presense check and validation
+//if (request.cookies['iPlanetDirectoryPro']!=null)
+//{
+//  String openAMCookie = request.cookies['iPlanetDirectoryPro']
+
+//}
+
+// Invoke OpenAM authentication
+def headers = ["Content-Type": "application/json", "X-OpenAM-Username": userId, "X-OpenAM-Password": password]
+println("Authenticating user: " + userId)
+String output = invokeOpenAMEndpoint(openAMURL+"authenticate", headers)
+// Set the tokenId in request header
+request.headers.add("tokenId", getToken(output))
+
+// Call the next handler. This returns when the request has been handled.
+return next.handle(context, request)
+
+

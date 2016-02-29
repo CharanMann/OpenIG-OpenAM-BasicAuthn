@@ -20,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,9 +48,11 @@ public class OpenAMBasicAuthenticator {
             URL url = new URL(openAMURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
-            conn.setRequestProperty("Accept", "application/json");
-            conn.setRequestProperty("X-OpenAM-Username", userId);
-            conn.setRequestProperty("X-OpenAM-Password", password);
+            Map headers = new HashMap();
+            headers.put("Content-Type", "application/json");
+            headers.put("X-OpenAM-Username", userId);
+            headers.put("X-OpenAM-Password", password);
+            setHeaders(conn, headers);
 
             if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 throw new RuntimeException("Failed : HTTP error code : "
@@ -70,9 +74,15 @@ public class OpenAMBasicAuthenticator {
         return null;
     }
 
+    private void setHeaders(HttpURLConnection conn, Map headers) {
+        for (Object headerName : headers.keySet()) {
+            conn.setRequestProperty((String) headerName, (String) headers.get(headerName));
+        }
+    }
+
     public static void main(String[] args) {
         OpenAMBasicAuthenticator openAMBasicAuthenticator = new OpenAMBasicAuthenticator();
-        System.out.println("User authenticated successfully, tokenId: " + openAMBasicAuthenticator.authenticate("charan", "password", "http://openam13.sample.com:8080/openam/json/employees/authenticate"));
+        System.out.println("User authenticated successfully, tokenId: " + openAMBasicAuthenticator.authenticate("testUser1", "password", "http://openam13.sample.com:8080/openam/json/authenticate"));
 
 
     }
