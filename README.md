@@ -7,10 +7,10 @@ Instructions:
  json-lib-2.4-jdk15.jar
  xml-resolver-1.2.jar
  commons-collections-3.2.1.jar
-
 2. Copy 07-opendj-openam under <User-Home>/.openig/config/routes
-
-3. Copy OpenAMBasicAuthFilter.groovy, BasicAuthFilter.groovy under <User-Home>/.openig/scripts/groovy
+3. Update openAMURL in 07-opendj-openam
+4. Copy OpenAMBasicAuthFilter.groovy, BasicAuthFilter.groovy under <User-Home>/.openig/scripts/groovy
+5. Restart OpenIG apache tomcat server
 
 
 Curl commands:
