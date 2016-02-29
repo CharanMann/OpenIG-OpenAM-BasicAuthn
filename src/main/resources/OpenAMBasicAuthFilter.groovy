@@ -110,7 +110,6 @@ if (null != request.cookies['iPlanetDirectoryPro']) {
 
         // Set the tokenId in request header
         request.headers.add("tokenId", openAMCookie)
-
         // Call the next handler. This returns when the request has been handled.
         return next.handle(context, request)
     }
@@ -119,10 +118,10 @@ if (null != request.cookies['iPlanetDirectoryPro']) {
 // Invoke OpenAM authentication
 def authnHeaders = ["Content-Type": "application/json", "X-OpenAM-Username": userId, "X-OpenAM-Password": password]
 println("Authenticating user: " + userId)
+
 String output = invokeOpenAMEndpoint(openAMURL + "authenticate", authnHeaders)
 // Set the tokenId in request header
 request.headers.add("tokenId", getToken(output))
-
 // Call the next handler. This returns when the request has been handled.
 return next.handle(context, request)
 

@@ -26,9 +26,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * OpenAMBasicAuthenticator for testing purposes only. Not required to be used in OpenAMBasicAuthFilter.groovy
+ * OpenAMBasicAuthenticatorTest for testing purposes only. Not required to be used in OpenAMBasicAuthFilter.groovy
  */
-public class OpenAMBasicAuthenticator {
+public class OpenAMBasicAuthenticatorTest {
 
     private String REGEX = "\\s*\\S*\"tokenId\"\\s*:\"(.*)\",";
     private Pattern pattern = Pattern.compile(REGEX);
@@ -107,11 +107,11 @@ public class OpenAMBasicAuthenticator {
     }
 
     public static void main(String[] args) {
-        OpenAMBasicAuthenticator openAMBasicAuthenticator = new OpenAMBasicAuthenticator();
-        String tokenId = openAMBasicAuthenticator.authenticate("testUser1", "password", "http://openam13.sample.com:8080/openam/json/authenticate");
+        OpenAMBasicAuthenticatorTest openAMBasicAuthenticatorTest = new OpenAMBasicAuthenticatorTest();
+        String tokenId = openAMBasicAuthenticatorTest.authenticate("testUser1", "password", "http://openam13.sample.com:8080/openam/json/authenticate");
         System.out.println("User authenticated successfully, tokenId: " + tokenId);
 
-        System.out.println(openAMBasicAuthenticator.tokenValidation(tokenId, "http://openam13.sample.com:8080/openam/json/sessions/" + tokenId + "?_action=validate").contains("\"valid\":true"));
+        System.out.println(openAMBasicAuthenticatorTest.tokenValidation(tokenId, "http://openam13.sample.com:8080/openam/json/sessions/" + tokenId + "?_action=validate").contains("\"valid\":true"));
 
 
     }
