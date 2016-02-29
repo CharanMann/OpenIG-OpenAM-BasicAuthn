@@ -1,6 +1,7 @@
 # OpenIG-OpenAM-BasicAuthn
 
 Instructions:
+
 1. Copy these jars in <OpenIG_Tomcat>/webapps/ROOT/WEB-INF/lib folder:
  http-builder-0.7.1.jar
  json-lib-2.4-jdk15.jar
