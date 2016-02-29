@@ -56,15 +56,18 @@ def getUnauthorizedError() {
 def invokeOpenAMEndpoint(String openAMEndpoint, Map headers) {
     HttpURLConnection connection
     try {
+        println("Invoking: " + openAMEndpoint)
         // Invoke OpenAM REST authentication
         URL url = new URL(openAMEndpoint)
         connection = (HttpURLConnection) url.openConnection()
         connection.setRequestMethod("POST")
 
         //Add headers
-        headers.each { hName, hValue ->
-            println("Adding header : " + hName + " , value: " + hValue)
-            connection.setRequestProperty(hName, hValue)
+        if (null != headers) {
+            headers.each { hName, hValue ->
+                println("Adding header : " + hName)
+                connection.setRequestProperty(hName, hValue)
+            }
         }
 
         int responseCode = connection.getResponseCode()
@@ -94,17 +97,29 @@ def invokeOpenAMEndpoint(String openAMEndpoint, Map headers) {
     return null;
 }
 
-//TODO Add OpenAM token presense check and validation
-//if (request.cookies['iPlanetDirectoryPro']!=null)
-//{
-//  String openAMCookie = request.cookies['iPlanetDirectoryPro']
+// Check if valid session is present
+if (null != request.cookies['iPlanetDirectoryPro']) {
+    String openAMCookie = request.cookies['iPlanetDirectoryPro'][0].value
 
-//}
+    // Perform cookie validation
+    println("iPlanetDirectoryPro cookie found, performing validation")
+    String sessionValidationOutput = invokeOpenAMEndpoint(openAMURL + "sessions/" + openAMCookie + "?_action=validate", null)
+
+    if (sessionValidationOutput.contains("\"valid\":true")) {
+        println("Valid session, skipping authentication")
+
+        // Set the tokenId in request header
+        request.headers.add("tokenId", openAMCookie)
+
+        // Call the next handler. This returns when the request has been handled.
+        return next.handle(context, request)
+    }
+}
 
 // Invoke OpenAM authentication
-def headers = ["Content-Type": "application/json", "X-OpenAM-Username": userId, "X-OpenAM-Password": password]
+def authnHeaders = ["Content-Type": "application/json", "X-OpenAM-Username": userId, "X-OpenAM-Password": password]
 println("Authenticating user: " + userId)
-String output = invokeOpenAMEndpoint(openAMURL+"authenticate", headers)
+String output = invokeOpenAMEndpoint(openAMURL + "authenticate", authnHeaders)
 // Set the tokenId in request header
 request.headers.add("tokenId", getToken(output))
 

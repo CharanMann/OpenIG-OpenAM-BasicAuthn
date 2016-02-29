@@ -74,6 +74,32 @@ public class OpenAMBasicAuthenticator {
         return null;
     }
 
+    public String tokenValidation(String tokenId, String openAMURL) {
+        HttpURLConnection conn = null;
+
+        try {
+            URL url = new URL(openAMURL);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+
+
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                throw new RuntimeException("Failed : HTTP error code : "
+                        + conn.getResponseCode());
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+            return br.readLine();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            conn.disconnect();
+        }
+    }
+
+
     private void setHeaders(HttpURLConnection conn, Map headers) {
         for (Object headerName : headers.keySet()) {
             conn.setRequestProperty((String) headerName, (String) headers.get(headerName));
@@ -82,7 +108,10 @@ public class OpenAMBasicAuthenticator {
 
     public static void main(String[] args) {
         OpenAMBasicAuthenticator openAMBasicAuthenticator = new OpenAMBasicAuthenticator();
-        System.out.println("User authenticated successfully, tokenId: " + openAMBasicAuthenticator.authenticate("testUser1", "password", "http://openam13.sample.com:8080/openam/json/authenticate"));
+        String tokenId = openAMBasicAuthenticator.authenticate("testUser1", "password", "http://openam13.sample.com:8080/openam/json/authenticate");
+        System.out.println("User authenticated successfully, tokenId: " + tokenId);
+
+        System.out.println(openAMBasicAuthenticator.tokenValidation(tokenId, "http://openam13.sample.com:8080/openam/json/sessions/" + tokenId + "?_action=validate").contains("\"valid\":true"));
 
 
     }
