@@ -17,7 +17,7 @@
 /*
  * Groovy script for OpenAM basic authentication
  *
- * This script requires these arguments: userId, password, openAMURL
+ * This script requires these arguments: userId, password, openamUrl
  */
 import groovyx.net.http.RESTClient
 import org.forgerock.http.protocol.Response
@@ -47,7 +47,7 @@ def callNextHandler(tokenId)
     return next.handle(context, request)
 }
 
-def openAMRESTClient = new RESTClient(openAMURL)
+def openAMRESTClient = new RESTClient(openamUrl)
 
 // Check if valid session is present
 if (null != request.cookies['iPlanetDirectoryPro']) {

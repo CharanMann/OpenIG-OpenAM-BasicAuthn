@@ -21,7 +21,7 @@
 import groovyx.net.http.RESTClient
 
 def openAMREST = new RESTClient( 'http://openam13.sample.com:8080/openam/json/' )
-def response = openAMREST.post(path : 'authenticate', headers: ['X-OpenAM-Username':'testUser1','X-OpenAM-Password':'passwod'])
+def response = openAMREST.post(path : 'authenticate', headers: ['X-OpenAM-Username':'testUser1','X-OpenAM-Password':'password'])
 
 assert response.status == 200  // HTTP response code; 404 means not found, etc.
 tokenId = response.getData().get("tokenId")
