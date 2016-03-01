@@ -3,6 +3,7 @@
 This is sample for protecting REST APIs using OpenIG with OpenAM
 
 Assumptions:
+
 1. OpenIG & OpenAM is deployed and configured.
 2. REST API server is up and running. This sample uses OpenDJ as REST API server.
 3. "OpenDJ Authorization header" filter is required for this sample as OpenDJ is used as REST API server. This filter can be customized as required by specific REST application.
