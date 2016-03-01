@@ -19,6 +19,8 @@
  *
  * This script requires these arguments: userId, password, openamUrl
  */
+@Grab(group = 'org.codehaus.groovy.modules.http-builder', module = 'http-builder', version = '0.7.1')
+
 import groovyx.net.http.RESTClient
 import org.forgerock.http.protocol.Response
 import org.forgerock.http.protocol.Status
@@ -38,10 +40,9 @@ def getUnauthorizedError() {
  * Set tokenId in request header and call next handler
  * @param tokenId
  */
-def callNextHandler(tokenId)
-{
-    // Set the tokenId in request header
-    request.headers.add("tokenId", tokenId)
+def callNextHandler(tokenId) {
+    // Set the tokenId in attributes
+    attributes.tokenId = tokenId
 
     // Call the next handler. This returns when the request has been handled.
     return next.handle(context, request)
@@ -61,7 +62,7 @@ if (null != request.cookies['iPlanetDirectoryPro']) {
     if (isTokenValid) {
         println("Valid OpenAM session, skipping authentication")
 
-        callNextHandler(openAMCookie)
+        return callNextHandler(openAMCookie)
     } else {
         println("Invalid OpenAM session")
     }

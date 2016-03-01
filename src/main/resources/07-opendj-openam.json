@@ -29,7 +29,7 @@
             "pepPassword": "password",
             "realm": "employees",
             "application": "OpenIG",
-            "ssoTokenSubject": "${request.headers['tokenId'][0]}"
+            "ssoTokenSubject": "${attributes.tokenId}"
           },
           "capture": "all"
         },
