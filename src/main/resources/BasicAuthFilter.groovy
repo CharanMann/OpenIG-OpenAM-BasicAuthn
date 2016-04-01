@@ -11,7 +11,10 @@
  * Header, with the fields enclosed by brackets [] replaced by your own identifying
  * information: "Portions copyright [year] [name of copyright owner]".
  *
- * Copyright 2016   Charan Mann
+ * Copyright 2016 Charan Mann
+ * Portions Copyrighted 2016 ForgeRock AS
+ *
+ * OpenIG-OpenAM-BasicAuthn: Created by Charan Mann on 4/1/16 , 6:12 AM.
  */
 
 /**
