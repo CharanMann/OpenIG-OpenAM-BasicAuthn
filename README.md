@@ -1,9 +1,9 @@
 # OpenIG-OpenAM-BasicAuthn
 
-*Protecting REST APIs using OpenIG with OpenAM*
+*Protecting REST APIs using OpenIG as PEP with OpenAM as PDP*
 
 
-This is sample for protecting REST APIs using OpenIG with OpenAM  
+This is sample for protecting REST APIs using OpenIG as PEP with OpenAM as PDP.  
 
 Disclaimer of Liability :
 =========================
